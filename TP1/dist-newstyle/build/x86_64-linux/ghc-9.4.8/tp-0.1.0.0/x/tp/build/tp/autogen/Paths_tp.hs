@@ -46,12 +46,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "/home/titan/.cabal/bin"
-libdir     = "/home/titan/.cabal/lib/x86_64-linux-ghc-9.4.8/tp-0.1.0.0-inplace-tp"
-dynlibdir  = "/home/titan/.cabal/lib/x86_64-linux-ghc-9.4.8"
-datadir    = "/home/titan/.cabal/share/x86_64-linux-ghc-9.4.8/tp-0.1.0.0"
-libexecdir = "/home/titan/.cabal/libexec/x86_64-linux-ghc-9.4.8/tp-0.1.0.0"
-sysconfdir = "/home/titan/.cabal/etc"
+bindir     = "/home/nacho/.cabal/bin"
+libdir     = "/home/nacho/.cabal/lib/x86_64-linux-ghc-9.4.8/tp-0.1.0.0-inplace-tp"
+dynlibdir  = "/home/nacho/.cabal/lib/x86_64-linux-ghc-9.4.8"
+datadir    = "/home/nacho/.cabal/share/x86_64-linux-ghc-9.4.8/tp-0.1.0.0"
+libexecdir = "/home/nacho/.cabal/libexec/x86_64-linux-ghc-9.4.8/tp-0.1.0.0"
+sysconfdir = "/home/nacho/.cabal/etc"
 
 getBinDir     = catchIO (getEnv "tp_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "tp_libdir")     (\_ -> return libdir)

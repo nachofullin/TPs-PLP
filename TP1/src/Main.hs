@@ -91,11 +91,13 @@ testsEj7 =
   test
     [ mostrar (intercalar (texto ", ") []) ~?= "",
       mostrar (intercalar (texto ", ") [a, b, c]) ~?= "a, b, c",
-      mostrar (intercalar (texto ", ") [indentar 2 (linea <+> texto "a")]) ~?= "\n  a",
+      mostrar (intercalar (texto ", ") [indentar 2 (linea <+> texto "a")]) ~?= "\n  a",   -- un solo elemento
+      mostrar (intercalar vacio [a, b, c]) ~?= "abc",   -- separador vacío
       mostrar (entreLlaves []) ~?= "{ }",
+      mostrar (entreLlaves [texto ""]) ~?= "{\n  \n}", -- valor vacío
       mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}",
       mostrar (entreLlaves [a, b <+> b]) ~?= "{\n  a,\n  bb\n}",
-      mostrar (entreLlaves [a <+> linea, b, a]) ~?= "{\n  a\n,\n  b,\n  a\n}" -- ¿tendría que generar indentar 2 DE LA NADA???
+      mostrar (entreLlaves [a <+> linea, b, a]) ~?= "{\n  a\n  ,\n  b,\n  a\n}" 
     ]
 
 testsEj8 :: Test
@@ -103,17 +105,23 @@ testsEj8 =
   test
     [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c",
       mostrar (aplanar (linea)) ~?= " ",
+      mostrar (aplanar vacio) ~?= "",
       mostrar (aplanar (indentar 1 linea <+> texto "a")) ~?= " a",
-      mostrar (aplanar (linea <+> texto "a" <+> linea)) ~?= " a "
+      mostrar (aplanar (linea <+> texto "a" <+> linea)) ~?= " a ",
+      mostrar (aplanar (texto "a" <+> linea <+> texto "b")) ~?= "a b",
+      mostrar (aplanar (texto "a" <+> linea <+> vacio <+> linea <+> texto "b")) ~?= "a  b"
     ]
 
 testsEj9 :: Test
 testsEj9 =
   test
-    [ mostrar (pponADoc pericles) ~?= "{ \"nombre\": \"Pericles\", \"edad\": 30 }",
+    [ mostrar (pponADoc (TextoPP "Morticia\n\"Addams\"")) ~?= "\"Morticia\\n\\\"Addams\\\"\"",    -- textoPP
+      mostrar (pponADoc (IntPP 42)) ~?= "42",                                                     -- intPP
+      mostrar (pponADoc (ObjetoPP [])) ~?= "{ }",                                                 -- vacio
+      mostrar (pponADoc (ObjetoPP [("clave", TextoPP "valor")])) ~?= "{ \"clave\": \"valor\" }",   -- objetoPP simple                                          
+      mostrar (pponADoc pericles) ~?= "{ \"nombre\": \"Pericles\", \"edad\": 30 }",               
       mostrar (pponADoc addams) ~?= "{\n  \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n  \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n}",
       mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}",
       mostrar (pponADoc cleripe) ~?= error "No puede estar la llamada al objeto dentro del objeto."
-      -- no se me ocurre otro
     ]
 
