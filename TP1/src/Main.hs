@@ -62,7 +62,8 @@ testsEj4 =
       mostrar (linea <+> linea <+> linea <+> linea <+> texto "Ind") ~?= "\n\n\n\nInd"
     ]
 
-pericles, merlina, addams, familias :: PPON
+cleripe, pericles, merlina, addams, familias :: PPON
+cleripe = ObjetoPP [("nombre",  cleripe), ("edad" , IntPP 3)]
 pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
 merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24)]
 addams = ObjetoPP [("0", pericles), ("1", merlina)]
@@ -72,7 +73,9 @@ testsEj6 :: Test
 testsEj6 =
   test
     [ pponObjetoSimple pericles ~?= True,
-      pponObjetoSimple addams ~?= False
+      pponObjetoSimple addams ~?= False,
+      pponObjetoSimple familias ~?= False,
+      pponObjetoSimple cleripe ~?= False -- ya que el mismo cleripe termina siendo compuesto, la paradoja cleripeana
     ]
 
 a, b, c :: Doc
@@ -85,14 +88,20 @@ testsEj7 =
   test
     [ mostrar (intercalar (texto ", ") []) ~?= "",
       mostrar (intercalar (texto ", ") [a, b, c]) ~?= "a, b, c",
+      mostrar (intercalar (texto ", ") [indentar 2 (linea <+> texto "a")]) ~?= "\n  a",
       mostrar (entreLlaves []) ~?= "{ }",
-      mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}"
+      mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}",
+      mostrar (entreLlaves [a, b <+> b]) ~?= "{\n  a,\n  bb\n}",
+      mostrar (entreLlaves [a <+> linea, b, a]) ~?= "{\n  a\n,\n  b,\n  a\n}" -- ¿tendría que generar indentar 2 DE LA NADA???
     ]
 
 testsEj8 :: Test
 testsEj8 =
   test
-    [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c"
+    [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c",
+      mostrar (aplanar (linea)) ~?= " ",
+      mostrar (aplanar (indentar 1 linea <+> texto "a")) ~?= " a",
+      mostrar (aplanar (linea <+> texto "a" <+> linea)) ~?= " a "
     ]
 
 testsEj9 :: Test
@@ -100,5 +109,8 @@ testsEj9 =
   test
     [ mostrar (pponADoc pericles) ~?= "{ \"nombre\": \"Pericles\", \"edad\": 30 }",
       mostrar (pponADoc addams) ~?= "{\n  \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n  \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n}",
-      mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}"
+      mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}",
+      mostrar (pponADoc cleripe) ~?= error "No puede estar la llamada al objeto dentro del objeto."
+      -- no se me ocurre otro
     ]
+
