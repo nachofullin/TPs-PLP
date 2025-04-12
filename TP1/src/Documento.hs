@@ -54,16 +54,26 @@ d1 <+> d2 = foldDoc d2 fTexto fLinea d1
 -- si d1 es linea vamos reconstruyendo el documento a partir de lo acumulado sin modificaciones
 -- si d1 es Texto hay 3 opciones, le sique vacio o linea y no cambia nada, o le sigue texto y lo concatenamos
 -- Invariante:
--- Nunca modificamos el contenido de los String, solo reconstruimos la estructura original y contcatenamos cuando hay 2 o mas textos seguidos
--- Entonces no pueden ser vacio ni contener saltos de linea que los harian invalidos
--- tampoco modiicamos los enteros i, haciendolos tambien validos y mayores a 0
--- En el caso base Vacio, insertamos d2, que ya es un Doc válido
-
+-- En fTexto nunca modificamos el contenido de los String, solo reconstruimos la estructura original 
+-- y contcatenamos cuando hay 2 o mas textos seguidos.
+-- Entonces no pueden ser vacio ("") ni contener saltos de linea (/n) que los harian invalidos
+-- En fLinea tampoco modiicamos los enteros i, dado que el documento original era válido, estos seran validos y mayores a 0
+-- En el caso base Vacio, insertamos d2, que ya es un Doc válido porque no lo modificamos
+-- En resumen, se preserva la validez de Doc porque:
+-- No se introducen strings inválidos.
+-- No se alteran los enteros i.
+-- Solo se reestructura sin romper las condiciones de los constructores.
 
 indentar :: Int -> Doc -> Doc
 indentar n = foldDoc vacio fTexto fLinea
   where fTexto s acc = Texto s acc
         fLinea i acc = Linea (i+n) acc
+-- Invariante:
+-- Solamente se esta modificando los valores de i de los constructores Linea al hacer fLinea.
+-- Dado que solo reemplazamos por Linea (i + n), y n > 0, entonces el nuevo valor siempre es mayor o igual que cero
+-- por ende sigue siendo valido que i >= 0.
+-- Con fTexto no se altera nada y en el caso vacio devolvemos vacio por lo que no hay inconvenientes ahi, 
+-- simplemente rearmamos la estructura Doc que ya era valida, haciendo la nueva valida tambien.
 
 mostrar :: Doc -> String
 mostrar = foldDoc "" fTexto fLinea

@@ -46,3 +46,7 @@ pponADoc (IntPP i) = texto (show i)             --show para obtener el numero co
 pponADoc (ObjetoPP pares) | pponObjetoSimple (ObjetoPP pares) = texto "{ " <+> intercalar (texto ", ") (map paresADoc pares) <+> texto " }"
                           | otherwise = entreLlaves (map paresADoc pares)
   where paresADoc (clave, valor) = texto (show clave) <+> texto ": " <+> pponADoc valor   --tomamos lista de pares claves y valores para transformarla en lista de Docs
+-- Para este ejercico estamos usando recursion estructural ya que nos basamos en el dato PPON,
+-- aplicando la funcion recursivamente a sus componentes (los valores de los pares de ObjetoPP).
+-- Hacemos la recursion sobre el dato para llegar a nuestro casos bases de TextoPP e IntPP para devolver un valor fijo.
+-- En el caso recursivo hacemos llamadas recursivas sobre partes del tipo PPON, sin manipular esas partes directamente.

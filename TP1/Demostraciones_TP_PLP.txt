@@ -1,0 +1,77 @@
+ ∀n ,m:: Int .n > 0 && m > 0 && ∀x :: Doc  indentar n (indentar m x) = indentar (n + m) x
+
+ P(x) = ∀n ,m:: Int .n > 0 ^ m > 0 indentar n (indentar m x) = indentar (n + m) x
+
+    foldDoc :: a -> (String -> a -> a) -> (Int -> a -> a) -> Doc -> a
+{F0}foldDoc fVacio fTexto fLinea doc = case doc of
+  	Vacio -> fVacio
+  	Texto s doc -> fTexto s (rec doc)
+  	Linea i doc -> fLinea i (rec doc)
+  	 where rec = foldDoc fVacio fTexto fLinea
+
+
+     indentar :: Int -> Doc -> Doc
+ {I0}indentar n = foldDoc vacio fTexto fLinea
+      where fTexto s acc = Texto s acc
+            fLinea i acc = Linea (i+n) acc
+
+ Realizaremos inducción estructural en x
+ 
+ x = Vacío
+     indentar n (indentar m Vacío) = indentar (n + m) Vacío
+
+ Lema 1:
+ {L1}     ∀k :: Int . indentar k Vacío = Vacío
+	. indentar k Vacío 
+    {I0}= foldDoc Vacío fTexto fLinea Vacío
+    {F0}= vacio
+    {V0}= Vacío
+
+ indentar n (indentar m Vacío) 
+ {L1}= indentar n Vacío 
+ {L1}= Vacío
+
+ 
+Caso x = Texto s d 			P(d) -> P(Texto s d)
+
+ {HI}         indentar n (indentar m (Texto s d)) = indentar (n + m)(Texto s d)
+
+ Lema 2:
+ {L2}     ∀k :: Int . k > 0 . ∀s :: String . ∀d :: Doc
+	  indentar k (Texto s d) = Texto s (indentar k d)
+
+ indentar k (Texto s d) 
+ {I0}= foldDoc Vacío fTexto fLinea k (Texto s d)
+ {F0}= Texto s foldDoc Vacío fTexto fLinea k d
+ {I0}= Texto s indentar k d
+
+ vuelvo a lo que quería probar :
+
+       indentar n (indentar m (Texto s d))
+ {L2}= indentar n (Texto s (indentar m d))
+ {L2}= Texto s (indentar n (indentar m d))
+ {HI}= Texto s (indentar (n + m) d)
+ {TI}= indentar (n + m) (Texto s d)
+
+ Caso x = Linea i d			P(d) -> P(Linea i d)
+
+ {HI} 		P(Linea i d) = ∀n ,m. n > 0 ^ m > 0 . indentar n (indentar m (Linea i d)) = indentar (n + m) (Linea i d)
+
+ Intento probar el Lema:
+ Lema 3:
+ {L3}	  ∀k ,n :: Int . k > 0 ^ n > 0 . ∀d :: Doc . indentar n (Linea k d) = Linea (n + k) (indentar n d)
+
+       indentar n (Linea k d)
+ {I0}= foldDoc Vacío fTexto fLinea n (Linea k d)
+ {L0}= Linea (n + k) (foldDoc Vacío fTexto fLinea n d)
+ {I0}= Linea (n + k) (indentar n d)
+
+       indentar n (indentar m (Linea i d))
+ {L3}= indentar n (Linea (m + i) (indentar m d)) 
+ {L3}= Linea (n + m + i) (indentar n (indentar m d))
+ {HI}= Linea (n + m + i) (indentar (n + m) d)
+ {L3}= indentar (n + m) (Linea i d)
+
+
+
+			

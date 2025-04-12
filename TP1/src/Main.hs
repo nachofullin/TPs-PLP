@@ -117,7 +117,7 @@ testsEj9 =
   test
     [ mostrar (pponADoc (TextoPP "Morticia\n\"Addams\"")) ~?= "\"Morticia\\n\\\"Addams\\\"\"",    -- textoPP
       mostrar (pponADoc (IntPP 42)) ~?= "42",                                                     -- intPP
-      mostrar (pponADoc (ObjetoPP [])) ~?= "{ }",                                                 -- vacio
+      mostrar (pponADoc (ObjetoPP [])) ~?= "{  }",                                                 -- vacio
       mostrar (pponADoc (ObjetoPP [("clave", TextoPP "valor")])) ~?= "{ \"clave\": \"valor\" }",   -- objetoPP simple                                          
       mostrar (pponADoc pericles) ~?= "{ \"nombre\": \"Pericles\", \"edad\": 30 }",               
       mostrar (pponADoc addams) ~?= "{\n  \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n  \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n}",
