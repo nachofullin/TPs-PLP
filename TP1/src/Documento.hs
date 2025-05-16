@@ -44,23 +44,23 @@ foldDoc fVacio fTexto fLinea doc = case doc of
 infixr 6 <+>
 
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = foldDoc d2 fTexto fLinea d1
-  where fTexto s Vacio = Texto s Vacio    -- este esta de mas creo
-        fTexto s (Texto t acc) = Texto (s ++ t) acc
+d1 <+> d2 = foldDoc d2 fTexto Linea d1
+  where fTexto s (Texto t acc) = Texto (s ++ t) acc
         fTexto s acc = Texto s acc
-        
-        fLinea i acc = Linea i acc
 -- si d1 es Vacio, llegamos al final del doc y concatenamos d2 al agregarlo a lo se va a ir acumulando
 -- si d1 es linea vamos reconstruyendo el documento a partir de lo acumulado sin modificaciones
--- si d1 es Texto hay 3 opciones, le sique vacio o linea y no cambia nada, o le sigue texto y lo concatenamos
+-- si d1 es Texto hay 3 opciones, le sigue vacio o linea y no cambia nada, o le sigue texto y lo concatenamos
+-- Al hacer esto evitamos que queden dos nodos Texto consecutivos.
 -- Invariante:
 -- En fTexto nunca modificamos el contenido de los String, solo reconstruimos la estructura original 
--- y contcatenamos cuando hay 2 o mas textos seguidos.
--- Entonces no pueden ser vacio ("") ni contener saltos de linea (/n) que los harian invalidos
--- En fLinea tampoco modiicamos los enteros i, dado que el documento original era válido, estos seran validos y mayores a 0
+-- y contcatenamos cuando hay 2 o mas textos seguidos, evitando asi que queden dos nodos Texto consecutivos.
+-- Entonces no pueden ser vacio ("") ni contener saltos de linea (/n) que los harian invalidos.
+-- En el caso que sea Linea devolvemos lo mismo que habia, no modicamos los enteros i
+-- y dado que el documento original era válido, estos seran validos y mayores a 0.
 -- En el caso base Vacio, insertamos d2, que ya es un Doc válido porque no lo modificamos
 -- En resumen, se preserva la validez de Doc porque:
 -- No se introducen strings inválidos.
+-- Nunca hay dos textos seguidos.
 -- No se alteran los enteros i.
 -- Solo se reestructura sin romper las condiciones de los constructores.
 
